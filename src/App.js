@@ -1,8 +1,9 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect
 } from "react-router-dom";
 
 import DashboardPage from "./pages/DashboardPage"
@@ -11,14 +12,15 @@ import theme from "./components/Themes";
 // Page
 import MangaMainPage from "./pages/Manga/MangaMainPage";
 import MangaTagPage from "./pages/Manga/MangaGenrePage";
+import SignInPage from "./pages/auth/SignInPage";
 
 const App = () => {
   return (
       <ThemeProvider theme={theme}>
           <Router>
               <Switch>
-                  <Route path="/auth/login">
-                      <h1>Login</h1>
+                  <Route path="/auth/sign-in">
+                      <SignInPage/>
                   </Route>
                   <Route path="/manga/genre">
                       <MangaTagPage/>
@@ -30,7 +32,7 @@ const App = () => {
                       <DashboardPage/>
                   </Route>
                   <Route path="/">
-                      <h1>Home</h1>
+                      <Redirect to="/dashboard"/>
                   </Route>
               </Switch>
           </Router>

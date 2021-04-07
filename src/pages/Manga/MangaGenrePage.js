@@ -41,11 +41,8 @@ const mangaMenu = [{
     name: "List",
     slug: "/manga"
 },{
-    name: "Category",
-    slug: "/manga/category"
-},{
-    name: "Tag",
-    slug: "/manga/tag"
+    name: "Genre",
+    slug: "/manga/genre"
 }]
 
 const MangaGenrePage = (props) => {

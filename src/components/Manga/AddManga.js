@@ -157,6 +157,7 @@ const AddMangaComponent = (props) => {
                                 <FormControl className={classes.formControlStatus}>
                                     <InputLabel id="demo-simple-select-label">Status</InputLabel>
                                     <Select
+                                        required
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         label="Status"
@@ -210,6 +211,7 @@ const AddMangaComponent = (props) => {
                                 <Grid item xs={12} sm={6}>
                                     <FormControl>
                                         <KeyboardDatePicker
+                                            required
                                             margin="normal"
                                             id="date-picker-dialog"
                                             label="Published From"
@@ -225,6 +227,7 @@ const AddMangaComponent = (props) => {
                                 <Grid item xs={12} sm={6}>
                                     <FormControl>
                                         <KeyboardDatePicker
+                                            required
                                             margin="normal"
                                             id="date-picker-dialog"
                                             label="Published To"
@@ -241,6 +244,7 @@ const AddMangaComponent = (props) => {
                             <Grid item xs={12}>
                                 <FormControl className={classes.formControlFull}>
                                     <TextField
+                                        required
                                         id="synopsis"
                                         label="Synopsis"
                                         checked={synopsis}
@@ -254,6 +258,7 @@ const AddMangaComponent = (props) => {
                                 <FormControl className={classes.formControlFull}>
                                     <InputLabel id="genres">Genres</InputLabel>
                                     <Select
+                                        required
                                         labelId="genres"
                                         id="genres"
                                         multiple

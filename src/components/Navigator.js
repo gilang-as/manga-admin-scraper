@@ -16,15 +16,16 @@ import PublicIcon from '@material-ui/icons/Public';
 import TimerIcon from '@material-ui/icons/Timer';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
+import {Link} from "react-router-dom";
 
 const categories = [
     {
         id: 'Data',
         children: [
-            { id: 'Manga', icon: <PeopleIcon />, active: true },
-            { id: 'Manhwa', icon: <DnsRoundedIcon /> },
-            { id: 'Manhua', icon: <PermMediaOutlinedIcon /> },
-            { id: 'Komik', icon: <PublicIcon /> }
+            { id: 'Manga', icon: <PeopleIcon />, url: "/manga" },
+            { id: 'Manhwa', icon: <DnsRoundedIcon />, url: "/mahwa" },
+            { id: 'Manhua', icon: <PermMediaOutlinedIcon />, url: "/manhua" },
+            { id: 'Komik', icon: <PublicIcon />, url: "/komik" }
         ],
     },
     {
@@ -110,8 +111,10 @@ const NavigatorComponent = (props) => {
                                 {id}
                             </ListItemText>
                         </ListItem>
-                        {children.map(({ id: childId, icon, active }) => (
+                        {children.map(({ id: childId, icon, active, url }) => (
                             <ListItem
+                                component={Link}
+                                to={url}
                                 key={childId}
                                 button
                                 className={clsx(classes.item, active && classes.itemActiveItem)}
