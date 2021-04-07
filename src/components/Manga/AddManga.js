@@ -35,17 +35,11 @@ const styles = (theme) => ({
     },
 });
 
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
+const genresData = [
+    {
+        id: 1,
+        name: "Comedy"
+    }
 ];
 
 function getStyles(name, personName, theme) {
@@ -86,6 +80,7 @@ const AddMangaComponent = (props) => {
 
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+
     const handleChange = (event) => {
         setGenres(event.target.value);
     };
@@ -99,7 +94,20 @@ const AddMangaComponent = (props) => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
+        console.log({
+            title,
+            japaneseTitle,
+            englishTitle,
+            status,
+            volumes,
+            chapters,
+            publishing,
+            publishedFrom,
+            publishedTo,
+            synopsis,
+            genres,
+            imageUrl
+        })
     }
 
     return (
@@ -236,7 +244,7 @@ const AddMangaComponent = (props) => {
                                         id="synopsis"
                                         label="Synopsis"
                                         checked={synopsis}
-                                        onChange={(e)=>setSynopsis(e.target.checked)}
+                                        onChange={(e)=>setSynopsis(e.target.value)}
                                         multiline
                                         rows={2}
                                     />
@@ -255,15 +263,15 @@ const AddMangaComponent = (props) => {
                                         renderValue={(selected) => (
                                             <div className={classes.chips}>
                                                 {selected.map((value) => (
-                                                    <Chip key={value} label={value} className={classes.chip} />
+                                                    <Chip key={value} label={genresData.find(o => o.id === value).name} className={classes.chip} />
                                                 ))}
                                             </div>
                                         )}
                                         MenuProps={MenuProps}
                                     >
-                                        {names.map((name) => (
-                                            <MenuItem key={name} value={name} style={getStyles(name, genres, theme)}>
-                                                {name}
+                                        {genresData.map((genre) => (
+                                            <MenuItem key={genre.id} value={genre.id} style={getStyles(genre, genres, theme)}>
+                                                {genre.name}
                                             </MenuItem>
                                         ))}
                                     </Select>
