@@ -15,6 +15,9 @@ import MainLayout from "../../components/container/MainLayout";
 import MangaListComponent from "../../components/MangaListComponent";
 import PaginationComponent from "../../components/PaginationComponent";
 import AddMangaComponent from "../../components/Manga/AddManga";
+import {useQuery} from "@apollo/client";
+import {GET_MANGA} from "../../queries/manga.queries"
+import Pagination from "@material-ui/lab/Pagination";
 
 const styles = (theme) => ({
     paper: {
@@ -37,6 +40,11 @@ const styles = (theme) => ({
     contentWrapper: {
         margin: '40px 16px',
     },
+    pagination: {
+        '& > *': {
+            marginTop: theme.spacing(2),
+        },
+    },
 });
 
 const mangaMenu = [{
@@ -49,7 +57,25 @@ const mangaMenu = [{
 
 const MangaMainPage = (props) => {
     const { classes } = props;
-    return(
+
+    const [page, setPage] = React.useState(1)
+
+    const { loading, error, data } = useQuery(GET_MANGA, {
+        variables:{
+            page: 1,
+            size: 2
+        }
+    });
+
+    React.useEffect(()=>{
+        console.log(data)
+    },[data])
+
+    const onChangePage = (e, value) => {
+        console.log(value)
+    }
+
+    return error?(<h1>Error</h1>):(
         <MainLayout title={"Manga List"} menu={mangaMenu}>
             <Paper className={classes.paper}>
                 <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
@@ -61,7 +87,7 @@ const MangaMainPage = (props) => {
                             <Grid item xs>
                                 <TextField
                                     fullWidth
-                                    placeholder="Search by email address, phone number, or user UID"
+                                    placeholder="Search manga"
                                     InputProps={{
                                         disableUnderline: true,
                                         className: classes.searchInput,
@@ -81,11 +107,13 @@ const MangaMainPage = (props) => {
                 </AppBar>
                 <div className={classes.contentWrapper}>
                     <Typography color="textSecondary" align="center">
-                        <MangaListComponent/>
-                        <MangaListComponent/>
-                        <MangaListComponent/>
+                        {loading?("Loading"):data.manga.map((dt, index)=>{
+                            return <MangaListComponent data={dt} key={index}/>
+                        })}
                         <Grid container justify="space-around">
-                            <PaginationComponent/>
+                            <div className={classes.pagination}>
+                                <Pagination count={2} shape="rounded" onChange={onChangePage} />
+                            </div>
                         </Grid>
                     </Typography>
                 </div>

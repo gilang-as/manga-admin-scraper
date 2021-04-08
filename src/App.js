@@ -13,6 +13,7 @@ import theme from "./components/Themes";
 import MangaMainPage from "./pages/Manga/MangaMainPage";
 import MangaTagPage from "./pages/Manga/MangaGenrePage";
 import SignInPage from "./pages/auth/SignInPage";
+import TestPage from "./pages/Test";
 
 const App = () => {
   return (
@@ -30,6 +31,9 @@ const App = () => {
                   </Route>
                   <Route path="/dashboard">
                       <DashboardPage/>
+                  </Route>
+                  <Route path="/test">
+                      <TestPage/>
                   </Route>
                   <Route path="/">
                       <Redirect to="/dashboard"/>

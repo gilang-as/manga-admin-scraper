@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    pagination: {
         '& > *': {
             marginTop: theme.spacing(2),
         },
@@ -13,9 +13,13 @@ const useStyles = makeStyles((theme) => ({
 export default function PaginationComponent() {
     const classes = useStyles();
 
+    const onChangePage = (e, value) => {
+        console.log(value)
+    }
+
     return (
-        <div className={classes.root}>
-            <Pagination count={10} shape="rounded" />
+        <div className={classes.pagination}>
+            <Pagination count={2} shape="rounded" onChange={onChangePage} />
         </div>
     );
 }

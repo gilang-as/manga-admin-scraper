@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function MangaListComponent() {
+export default function MangaListComponent({data}) {
     const classes = useStyles();
     const theme = useTheme();
 
@@ -45,16 +45,16 @@ export default function MangaListComponent() {
         <Card className={classes.root} elevation={0}>
             <CardMedia
                 className={classes.cover}
-                image="https://material-ui.com/static/images/cards/live-from-space.jpg"
+                image={data.image_url}
                 title="Live from space album cover"
             />
             <div className={classes.details}>
                 <CardContent className={classes.content}>
                     <Typography component="h5" variant="h5">
-                        Live From Space
+                        {data.title}
                     </Typography>
                     <Typography variant="subtitle1" color="textSecondary">
-                        Mac Miller
+                        {data.original_title}
                     </Typography>
                 </CardContent>
                 <div className={classes.controls}>
