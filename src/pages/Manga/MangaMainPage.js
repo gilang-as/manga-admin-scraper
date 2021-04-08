@@ -12,12 +12,12 @@ import IconButton from "@material-ui/core/IconButton";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import Typography from "@material-ui/core/Typography";
 import MainLayout from "../../components/container/MainLayout";
-import MangaListComponent from "../../components/MangaListComponent";
-import PaginationComponent from "../../components/PaginationComponent";
+import MangaListComponent from "../../components/Manga/MangaListComponent";
 import AddMangaComponent from "../../components/Manga/AddManga";
 import {useQuery} from "@apollo/client";
 import {GET_MANGA} from "../../queries/manga.queries"
 import Pagination from "@material-ui/lab/Pagination";
+import MangaListLoadingComponent from "../../components/Manga/MangaListLoadingComponent";
 
 const styles = (theme) => ({
     paper: {
@@ -60,19 +60,16 @@ const MangaMainPage = (props) => {
 
     const [page, setPage] = React.useState(1)
 
+    const limit = 1;
     const { loading, error, data } = useQuery(GET_MANGA, {
         variables:{
-            page: 1,
-            size: 2
+            skip: page,
+            limit
         }
     });
 
-    React.useEffect(()=>{
-        console.log(data)
-    },[data])
-
     const onChangePage = (e, value) => {
-        console.log(value)
+        setPage(value);
     }
 
     return error?(<h1>Error</h1>):(
@@ -107,14 +104,24 @@ const MangaMainPage = (props) => {
                 </AppBar>
                 <div className={classes.contentWrapper}>
                     <Typography color="textSecondary" align="center">
-                        {loading?("Loading"):data.manga.map((dt, index)=>{
+                        {loading?(
+                            <>
+                                <MangaListLoadingComponent/>
+                                <MangaListLoadingComponent/>
+                                <MangaListLoadingComponent/>
+                                <MangaListLoadingComponent/>
+                                <MangaListLoadingComponent/>
+                            </>
+                        ):data.getManga.items.map((dt, index)=>{
                             return <MangaListComponent data={dt} key={index}/>
                         })}
-                        <Grid container justify="space-around">
-                            <div className={classes.pagination}>
-                                <Pagination count={2} shape="rounded" onChange={onChangePage} />
-                            </div>
-                        </Grid>
+                        {loading?null:(
+                            <Grid container justify="space-around">
+                                <div className={classes.pagination}>
+                                    <Pagination count={data.getManga.count} shape="rounded" page={page} onChange={onChangePage} />
+                                </div>
+                            </Grid>
+                        )}
                     </Typography>
                 </div>
             </Paper>
