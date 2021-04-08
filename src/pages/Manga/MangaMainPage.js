@@ -60,7 +60,7 @@ const MangaMainPage = (props) => {
 
     const [page, setPage] = React.useState(1)
 
-    const limit = 1;
+    const limit = 5;
     const { loading, error, data } = useQuery(GET_MANGA, {
         variables:{
             skip: page,

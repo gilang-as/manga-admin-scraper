@@ -11,11 +11,14 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import {Chip, FormControlLabel, Input, Switch, useTheme} from "@material-ui/core";
+import {Chip, FormControlLabel, Input, Snackbar, Switch, useTheme} from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-
+import {Alert} from "@material-ui/lab";
+import axios from "axios";
+import {useMutation} from "@apollo/client";
+import {ADD_MANGA, GET_MANGA} from "../../queries/manga.queries"
 const styles = (theme) => ({
     addUser: {
         marginRight: theme.spacing(1),
@@ -64,11 +67,11 @@ const MenuProps = {
 
 const AddMangaComponent = (props) => {
     const { classes } = props;
-
+    const [malId, setMalId] = React.useState(91941);
     const [title, setTitle] = React.useState(null);
     const [japaneseTitle, setJapaneseTitle] = React.useState(null);
     const [englishTitle, setEnglishTitle] = React.useState(null);
-    const [status, setStatus] = React.useState(null);
+    const [status, setStatus] = React.useState("aired");
     const [volumes, setVolumes] = React.useState(null);
     const [chapters, setChapters] = React.useState(null);
     const [publishing, setPublishing] = React.useState(false);
@@ -92,26 +95,94 @@ const AddMangaComponent = (props) => {
         setOpen(false);
     };
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        console.log({
-            title,
-            japaneseTitle,
-            englishTitle,
-            status,
-            volumes,
-            chapters,
-            publishing,
-            publishedFrom,
-            publishedTo,
-            synopsis,
-            genres,
-            imageUrl
-        })
+    const [addAnime ] = useMutation(ADD_MANGA, {
+        refetchQueries: [
+            {
+                query: GET_MANGA,
+                variables: {
+                    skip: 1,
+                    limit: 5
+                }
+            }
+        ]
+    });
+
+    const onSubmit = async (e) => {
+        try {
+            e.preventDefault();
+            await addAnime({variables:{
+                    title: title,
+                    original_title: japaneseTitle,
+                    english_title: englishTitle,
+                    status: status,
+                    volumes: volumes,
+                    chapters: chapters,
+                    publishing: publishing,
+                    published_from: publishedFrom,
+                    published_to: publishedTo,
+                    synopsis: synopsis,
+                    image_url: imageUrl
+                }})
+
+            setOpen(false);
+        }catch (e){
+
+        }
     }
+
+    const onGenerate = async () => {
+        try {
+            if(malId === 0 || malId === "" || malId === null){
+                setOpenErrorNotification(true);
+            }else{
+                const mangaData = await axios.get(`https://api.jikan.moe/v3/manga/${malId}`);
+                setTitle(mangaData.data.title)
+                setJapaneseTitle(mangaData.data.title_japanese)
+                setEnglishTitle(mangaData.data.title_english)
+                setStatus(mangaData.data.status)
+                setVolumes(mangaData.data.volumes==null?0:mangaData.data.volumes)
+                setChapters(mangaData.data.chapters==null?0:mangaData.data.chapters)
+                setPublishing(mangaData.data.publishing)
+                setPublishedFrom(mangaData.data.published.from)
+                setPublishedTo(mangaData.data.published.to)
+                setSynopsis(mangaData.data.synopsis)
+                // setGenres(mangaData.data.title)
+                setImageUrl(mangaData.data.image_url)
+                setOpenSuccessNotification(true);
+            }
+        }catch (e) {
+            setOpenErrorNotification(true);
+        }
+    }
+
+    const [openSuccessNotification, setOpenSuccessNotification] = React.useState(false);
+    const handleSuccessNotification = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSuccessNotification(false);
+    };
+
+    const [openErrorNotification, setOpenErrorNotification] = React.useState(false);
+    const handleErrorNotification = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenErrorNotification(false);
+    };
 
     return (
         <>
+            <Snackbar open={openSuccessNotification} autoHideDuration={2000} onClose={handleSuccessNotification}>
+                <Alert onClose={handleSuccessNotification} severity="success">
+                    Success Generate!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openErrorNotification} autoHideDuration={2000} onClose={handleErrorNotification}>
+                <Alert onClose={handleErrorNotification} severity="error">
+                    <b>Error Generate!</b> Please enter valid mal id.
+                </Alert>
+            </Snackbar>
             <Button variant="contained" color="primary" onClick={handleClickOpen} className={classes.addUser}>
                 Add Manga
             </Button>
@@ -165,8 +236,8 @@ const AddMangaComponent = (props) => {
                                         onChange={(e)=>setStatus(e.target.value)}
                                     >
                                         <MenuItem value={'aired'}>Aired</MenuItem>
-                                        <MenuItem value={'unfinished'}>Unfinished</MenuItem>
-                                        <MenuItem value={'finished'}>Finished</MenuItem>
+                                        <MenuItem value={'Publishing'}>Publishing</MenuItem>
+                                        <MenuItem value={'Finished'}>Finished</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -227,7 +298,6 @@ const AddMangaComponent = (props) => {
                                 <Grid item xs={12} sm={6}>
                                     <FormControl>
                                         <KeyboardDatePicker
-                                            required
                                             margin="normal"
                                             id="date-picker-dialog"
                                             label="Published To"
@@ -247,7 +317,7 @@ const AddMangaComponent = (props) => {
                                         required
                                         id="synopsis"
                                         label="Synopsis"
-                                        checked={synopsis}
+                                        defaultValue={synopsis}
                                         onChange={(e)=>setSynopsis(e.target.value)}
                                         multiline
                                         rows={2}
@@ -258,7 +328,6 @@ const AddMangaComponent = (props) => {
                                 <FormControl className={classes.formControlFull}>
                                     <InputLabel id="genres">Genres</InputLabel>
                                     <Select
-                                        required
                                         labelId="genres"
                                         id="genres"
                                         multiple
@@ -288,8 +357,8 @@ const AddMangaComponent = (props) => {
                                     id="image_url"
                                     name="image_url"
                                     label="Image Url"
-                                    checked={imageUrl}
-                                    onChange={(e)=>setImageUrl(e.target.checked)}
+                                    value={imageUrl}
+                                    onChange={(e)=>setImageUrl(e.target.value)}
                                     fullWidth
                                 />
                             </Grid>
@@ -307,8 +376,10 @@ const AddMangaComponent = (props) => {
                                     style={{
                                         width: "35%"
                                     }}
+                                    value={malId}
+                                    onChange={(e)=>setMalId(e.target.value)}
                                 />
-                                <Button color="primary" style={{marginLeft: "5px"}}>
+                                <Button color="primary" style={{marginLeft: "5px"}} onClick={onGenerate}>
                                     Generate
                                 </Button>
                             </Grid>
